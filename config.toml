@@ -1,0 +1,25 @@
+[data]
+input_h5ad = "data/pbmc_demo.h5ad"
+preprocessed_h5ad = "data/preprocessed.h5ad"
+embeddings_npz = "data/embeddings.npz"
+label_column = "cell_type"
+
+[model]
+geneformer_ckpt = "ctheodoris/Geneformer"
+top_genes = 1024
+batch_size = 32
+batch_size_cpu = 8
+
+[training]
+test_size = 0.2
+random_state = 42
+classifier_type = "mlp"
+model_path = "models/ct_head.joblib"
+
+[evaluation]
+report_path = "results/evaluation.json"
+confusion_matrix_path = "results/confusion_matrix.png"
+
+[api]
+host = "0.0.0.0"
+port = 8000

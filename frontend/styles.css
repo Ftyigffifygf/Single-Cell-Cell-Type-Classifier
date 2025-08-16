@@ -1,0 +1,122 @@
+﻿/* Custom styles for Single-Cell Cell-Type Classifier */
+
+.gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.cell-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.cell-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.gene-input {
+    transition: all 0.2s ease;
+}
+
+.gene-input:focus {
+    transform: scale(1.02);
+}
+
+.prediction-card {
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.probability-bar {
+    transition: width 0.8s ease-out;
+}
+
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.cell-type-badge {
+    background: linear-gradient(45deg, #4f46e5, #7c3aed);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.confidence-meter {
+    background: conic-gradient(
+        from 0deg,
+        #ef4444 0deg 72deg,
+        #f59e0b 72deg 144deg,
+        #10b981 144deg 360deg
+    );
+    border-radius: 50%;
+    padding: 4px;
+}
+
+.confidence-inner {
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .mobile-stack {
+        flex-direction: column;
+    }
+    
+    .mobile-full {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .mobile-text-sm {
+        font-size: 0.875rem;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .dark-mode {
+        background-color: #1f2937;
+        color: #f9fafb;
+    }
+    
+    .dark-card {
+        background-color: #374151;
+        border-color: #4b5563;
+    }
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    .print-full-width {
+        width: 100% !important;
+    }
+}

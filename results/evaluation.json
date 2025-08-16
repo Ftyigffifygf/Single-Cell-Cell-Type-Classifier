@@ -1,0 +1,55 @@
+{
+  "accuracy": 0.9935064935064936,
+  "macro_f1": 0.9941831595374903,
+  "report": {
+    "B_cells": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 24.0
+    },
+    "Dendritic_cells": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 11.0
+    },
+    "Monocytes": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 31.0
+    },
+    "NK_cells": {
+      "precision": 0.9473684210526315,
+      "recall": 1.0,
+      "f1-score": 0.972972972972973,
+      "support": 18.0
+    },
+    "Platelets": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 6.0
+    },
+    "T_cells": {
+      "precision": 1.0,
+      "recall": 0.984375,
+      "f1-score": 0.9921259842519685,
+      "support": 64.0
+    },
+    "accuracy": 0.9935064935064936,
+    "macro avg": {
+      "precision": 0.9912280701754387,
+      "recall": 0.9973958333333334,
+      "f1-score": 0.9941831595374903,
+      "support": 154.0
+    },
+    "weighted avg": {
+      "precision": 0.9938482570061518,
+      "recall": 0.9935064935064936,
+      "f1-score": 0.9935686786080488,
+      "support": 154.0
+    }
+  }
+}

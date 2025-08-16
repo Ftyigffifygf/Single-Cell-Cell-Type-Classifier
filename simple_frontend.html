@@ -1,0 +1,299 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single-Cell Cell-Type Classifier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <header class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-microscope text-3xl text-blue-600"></i>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Single-Cell Cell-Type Classifier</h1>
+                    <p class="text-gray-600">AI-powered cell type identification using Geneformer + NVIDIA API</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold mb-6 text-gray-900">
+                    <i class="fas fa-dna mr-2 text-blue-600"></i>Gene Expression Input
+                </h2>
+                
+                <div class="mb-6">
+                    <p class="text-sm text-gray-600 mb-3">Quick Load Sample Data:</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="loadTCells()" class="bg-blue-100 text-blue-800 px-3 py-1 rounded hover:bg-blue-200">T Cells</button>
+                        <button onclick="loadBCells()" class="bg-green-100 text-green-800 px-3 py-1 rounded hover:bg-green-200">B Cells</button>
+                        <button onclick="loadMonocytes()" class="bg-purple-100 text-purple-800 px-3 py-1 rounded hover:bg-purple-200">Monocytes</button>
+                        <button onclick="loadNKCells()" class="bg-red-100 text-red-800 px-3 py-1 rounded hover:bg-red-200">NK Cells</button>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex space-x-4">
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Gene 1</label>
+                            <input type="text" id="gene1" class="w-full px-3 py-2 border border-gray-300 rounded-md" value="CD3D">
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Expression</label>
+                            <input type="number" id="expr1" class="w-full px-3 py-2 border border-gray-300 rounded-md" value="0" min="0" step="0.1">
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Gene 2</label>
+                            <input type="text" id="gene2" class="w-full px-3 py-2 border border-gray-300 rounded-md" value="CD19">
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Expression</label>
+                            <input type="number" id="expr2" class="w-full px-3 py-2 border border-gray-300 rounded-md" value="0" min="0" step="0.1">
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Gene 3</label>
+                            <input type="text" id="gene3" class="w-full px-3 py-2 border border-gray-300 rounded-md" value="CD14">
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Expression</label>
+                            <input type="number" id="expr3" class="w-full px-3 py-2 border border-gray-300 rounded-md" value="0" min="0" step="0.1">
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Gene 4</label>
+                            <input type="text" id="gene4" class="w-full px-3 py-2 border border-gray-300 rounded-md" value="KLRD1">
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Expression</label>
+                            <input type="number" id="expr4" class="w-full px-3 py-2 border border-gray-300 rounded-md" value="0" min="0" step="0.1">
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="predictCellType()" id="predictBtn" class="w-full mt-6 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 font-medium text-lg">
+                    <i class="fas fa-search mr-2"></i>Predict Cell Type
+                </button>
+
+                <div id="errorDiv" class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg hidden">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
+                        <span id="errorText" class="text-red-700"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4">
+                        <i class="fas fa-info-circle mr-2 text-blue-600"></i>Model Status
+                    </h3>
+                    <div class="flex items-center space-x-2">
+                        <div id="statusIndicator" class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <span id="statusText">Connecting...</span>
+                    </div>
+                    <div id="modelInfo" class="mt-4 hidden">
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Model:</span>
+                                <span id="modelType" class="font-medium">MLPClassifier</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Accuracy:</span>
+                                <span class="font-medium text-green-600">99.35%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="resultsPanel" class="bg-white rounded-lg shadow-lg p-6 hidden">
+                    <h3 class="text-xl font-bold mb-4">
+                        <i class="fas fa-chart-bar mr-2 text-green-600"></i>Results
+                    </h3>
+                    
+                    <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <div class="text-center">
+                            <div id="predictedType" class="text-2xl font-bold text-green-800 mb-2">-</div>
+                            <div id="confidence" class="text-green-600">Confidence: -%</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-3">Probability Distribution:</h4>
+                        <div id="probabilities" class="space-y-2"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4">
+                        <i class="fas fa-question-circle mr-2 text-purple-600"></i>How to Use
+                    </h3>
+                    <div class="space-y-3 text-sm text-gray-600">
+                        <div>1. Enter gene names and expression levels</div>
+                        <div>2. Use sample data buttons for quick testing</div>
+                        <div>3. Click "Predict Cell Type" to get results</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = "http://localhost:8000";
+        
+        window.onload = function() {
+            checkAPIStatus();
+        };
+
+        async function checkAPIStatus() {
+            try {
+                const response = await fetch(API_BASE_URL + "/info");
+                const data = await response.json();
+                
+                document.getElementById("statusIndicator").className = "w-3 h-3 bg-green-500 rounded-full";
+                document.getElementById("statusText").textContent = "Online";
+                document.getElementById("modelInfo").classList.remove("hidden");
+                
+            } catch (error) {
+                document.getElementById("statusIndicator").className = "w-3 h-3 bg-red-500 rounded-full";
+                document.getElementById("statusText").textContent = "Offline";
+                showError("API server not running. Start with: python serve_api_simple.py");
+            }
+        }
+
+        function loadTCells() {
+            document.getElementById("gene1").value = "CD3D";
+            document.getElementById("expr1").value = "100";
+            document.getElementById("gene2").value = "CD8A";
+            document.getElementById("expr2").value = "80";
+            document.getElementById("gene3").value = "CD4";
+            document.getElementById("expr3").value = "60";
+            document.getElementById("gene4").value = "CD19";
+            document.getElementById("expr4").value = "0";
+        }
+
+        function loadBCells() {
+            document.getElementById("gene1").value = "CD19";
+            document.getElementById("expr1").value = "120";
+            document.getElementById("gene2").value = "MS4A1";
+            document.getElementById("expr2").value = "90";
+            document.getElementById("gene3").value = "CD3D";
+            document.getElementById("expr3").value = "0";
+            document.getElementById("gene4").value = "CD14";
+            document.getElementById("expr4").value = "0";
+        }
+
+        function loadMonocytes() {
+            document.getElementById("gene1").value = "CD14";
+            document.getElementById("expr1").value = "150";
+            document.getElementById("gene2").value = "FCGR1A";
+            document.getElementById("expr2").value = "100";
+            document.getElementById("gene3").value = "CD3D";
+            document.getElementById("expr3").value = "0";
+            document.getElementById("gene4").value = "CD19";
+            document.getElementById("expr4").value = "0";
+        }
+
+        function loadNKCells() {
+            document.getElementById("gene1").value = "KLRD1";
+            document.getElementById("expr1").value = "130";
+            document.getElementById("gene2").value = "FCGR3A";
+            document.getElementById("expr2").value = "90";
+            document.getElementById("gene3").value = "CD3D";
+            document.getElementById("expr3").value = "10";
+            document.getElementById("gene4").value = "CD19";
+            document.getElementById("expr4").value = "0";
+        }
+
+        async function predictCellType() {
+            const geneNames = [
+                document.getElementById("gene1").value,
+                document.getElementById("gene2").value,
+                document.getElementById("gene3").value,
+                document.getElementById("gene4").value
+            ];
+            
+            const geneExpressions = [
+                parseFloat(document.getElementById("expr1").value) || 0,
+                parseFloat(document.getElementById("expr2").value) || 0,
+                parseFloat(document.getElementById("expr3").value) || 0,
+                parseFloat(document.getElementById("expr4").value) || 0
+            ];
+            
+            if (geneExpressions.every(exp => exp === 0)) {
+                showError("Please enter at least one non-zero expression value.");
+                return;
+            }
+
+            const btn = document.getElementById("predictBtn");
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Analyzing...';
+            btn.disabled = true;
+            hideError();
+
+            try {
+                const response = await fetch(API_BASE_URL + "/predict", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        gene_expression: geneExpressions,
+                        gene_names: geneNames
+                    })
+                });
+
+                if (!response.ok) throw new Error("Prediction failed");
+                const result = await response.json();
+                displayResults(result);
+
+            } catch (error) {
+                showError("Prediction failed. Check API server and try again.");
+            } finally {
+                btn.innerHTML = '<i class="fas fa-search mr-2"></i>Predict Cell Type';
+                btn.disabled = false;
+            }
+        }
+
+        function displayResults(result) {
+            document.getElementById("resultsPanel").classList.remove("hidden");
+            document.getElementById("predictedType").textContent = result.cell_type.replace("_", " ");
+            document.getElementById("confidence").textContent = "Confidence: " + (result.confidence * 100).toFixed(1) + "%";
+            
+            const probContainer = document.getElementById("probabilities");
+            probContainer.innerHTML = "";
+            
+            const sortedProbs = Object.entries(result.probabilities).sort((a, b) => b[1] - a[1]);
+            
+            sortedProbs.forEach(([cellType, prob]) => {
+                const probRow = document.createElement("div");
+                probRow.className = "flex items-center";
+                probRow.innerHTML = 
+                    '<div class="w-20 text-sm text-gray-600">' + cellType.replace("_", " ") + '</div>' +
+                    '<div class="flex-1 mx-3"><div class="bg-gray-200 rounded-full h-2">' +
+                    '<div class="bg-blue-600 h-2 rounded-full" style="width: ' + (prob * 100) + '%"></div></div></div>' +
+                    '<div class="w-12 text-sm text-right">' + (prob * 100).toFixed(1) + '%</div>';
+                probContainer.appendChild(probRow);
+            });
+        }
+
+        function showError(message) {
+            document.getElementById("errorText").textContent = message;
+            document.getElementById("errorDiv").classList.remove("hidden");
+        }
+
+        function hideError() {
+            document.getElementById("errorDiv").classList.add("hidden");
+        }
+    </script>
+</body>
+</html>
